@@ -3,36 +3,28 @@
 //     {first_name:"Jane", last_name: "Smith", email:"janesmith@example.com", birthdate:"2015-09-01", salary:75000}
 // ];
 
-
-
 // //OLD WAY DEMO - CONSTRUCTOR FUNCTION
 // function Employee(firstName, lastName, email, birthdate, salary) {
-//     this.firstName = firstName;
-//     this.lastName = lastName;
-//     this.email = email;
-//     this.birthdate = birthdate;
-//     this.salary = salary;
-//   }
+//   this.firstName = firstName;
+//   this.lastName = lastName;
+//   this.email = email;
+//   this.birthdate = birthdate;
+//   this.salary = salary;
+// }
+// Employee.addEmployee = function(firstName, lastName, email, birthdate, salary) {
+//   return new Employee(firstName, lastName, email, birthdate, salary);
+// };
+// Employee.prototype.editEmployee = function(updates) {
+//   Object.assign(this, updates);
+// };
+// const bill = Employee.addEmployee("Bill", "Doe", "bill@example.com", "1990-01-01", 50000);
+// console.log(bill);
+// bill.editEmployee({ salary: 7777777, email: "xxxxxxx@example.com" });
+// console.log(bill);
 
-//   Employee.addEmployee = function(firstName, lastName, email, birthdate, salary) {
-//     return new Employee(firstName, lastName, email, birthdate, salary);
-//   };
-
-//   Employee.prototype.editEmployee = function(updates) {
-//     Object.assign(this, updates);
-//   };
-
-//   // Usage example:
-//   const bill = Employee.addEmployee("Bill", "Doe", "bill@example.com", "1990-01-01", 50000);
-//   console.log(bill);
-
-//   bill.editEmployee({ salary: 7777777, email: "xxxxxxx@example.com" });
-//   console.log(bill);
-
-
-//ES6 way - CLASSES - Create a new Employee class that adds a new employee and console logs them
-// Goals:
-// 1. Create a new Employee class with a constructor for Employee giving them a firstname, lastname, email, and birthdate
+/* ========================================================================== */
+/* 1. Classes */
+/* ========================================================================== */
 class Employee {
   constructor(firstName, lastName, email, birthdate) {
     this.firstName = firstName;
@@ -42,20 +34,17 @@ class Employee {
   }
 }
 
-
-// 2. Instantiate (i.e. create a new instance) of an Employee with your info and save it to a const with your first name
+// 2. Instantiate
 const ivan = new Employee("Ivan", "Mata", "ivanmata@example.com", "2004-10-27");
 
-
-// 3. After step 2, console log your const and then try to console.log parts of the object
-console.log(ivan); 
+// 3. Log object & parts
+console.log(ivan);
 console.log(ivan.firstName);
 console.log(ivan.lastName);
 console.log(ivan.email);
 console.log(ivan.birthdate);
 
-
-// 4. Then create a const array that creates many "new Employee" objects and says to an array.  Console this object as a whole and parts of it
+// 4. Array of Employees
 const employees = [
   ivan,
   new Employee("Alice", "Johnson", "aj@example.com", "1990-05-15"),
@@ -67,39 +56,28 @@ console.log(employees[0].firstName);
 console.log(employees[1].email);
 console.log(employees[2].birthdate);
 
-
-// 5. Add methods to your class to "getEmployees" which just returns all the fields in the object.
-//    Also add methods to addEmployee (this will be static) and a method to editEmployee
-//    Test your methods using JS
+// 5. Class methods (Get, Add, Edit)
 Employee.prototype.getEmployees = function() {
   return `Name: ${this.firstName} ${this.lastName}, Email: ${this.email}, Birthdate: ${this.birthdate}`;
 };
-
 Employee.addEmployee = function(firstName, lastName, email, birthdate) {
   return new Employee(firstName, lastName, email, birthdate);
 };
-
 Employee.prototype.editEmployee = function(updates) {
   Object.assign(this, updates);
 };
-
-// Test the methods
+// Test methods
 console.log(ivan.getEmployees());
 const newEmployee = Employee.addEmployee("Test", "User", "test@example.com", "2000-01-01");
 console.log(newEmployee.getEmployees());
 newEmployee.editEmployee({ email: "updated@example.com" });
 console.log(newEmployee.getEmployees());
 
-
-// 6. Try to get instances of your class object to display in the table.  You can set the innerhtml
-//    of the table to be empty and then replace it with the looped-through values of your object
+// 6. Render table
 document.addEventListener("DOMContentLoaded", () => {
   const employeeTable = document.getElementById("employeeTable");
   if (!employeeTable) return;
-
-  employeeTable.innerHTML = ""; // Clear existing content
-
-  // Create table header
+  employeeTable.innerHTML = "";
   const headerRow = document.createElement('tr');
   headerRow.innerHTML = `
     <th>First Name</th>
@@ -108,11 +86,8 @@ document.addEventListener("DOMContentLoaded", () => {
     <th>Birthdate</th>
   `;
   employeeTable.appendChild(headerRow);
-
-  // Loop through employees and add rows to the table
   employees.forEach(x => {
     const newRow = document.createElement('tr');
-    // NOTE: don't nest a <tr> inside a <tr>; just add <td> cells.
     newRow.innerHTML = `
       <td>${x.firstName}</td>
       <td>${x.lastName}</td>
@@ -123,12 +98,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-
 /* ========================================================================== */
-/* Callbacks */
+/* 2. Callbacks — verifyPaymentCb                                             */
 /* ========================================================================== */
-
-function verifyPayment(orderTotal, onSuccess, onError) {
+function verifyPaymentCb(orderTotal, onSuccess, onError) {
   setTimeout(() => {
     if (orderTotal < 5000) {
       onSuccess(`Payment verified for $${orderTotal.toFixed(2)}`);
@@ -137,14 +110,42 @@ function verifyPayment(orderTotal, onSuccess, onError) {
     }
   }, 800);
 }
+// Tests (callbacks)
+verifyPaymentCb(3000, (msg) => console.log(msg), (err) => console.error(err));
+verifyPaymentCb(6000, (msg) => console.log(msg), (err) => console.error(err));
 
-// Tests
-verifyPayment(3000,
-  (msg) => console.log(msg),
-  (err) => console.error(err)
-);
+/* ========================================================================== */
+/* 3. Promises — verifyPaymentPromise                                         */
+/* ========================================================================== */
+function verifyPaymentPromise(orderTotal) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (orderTotal < 5000) {
+        resolve(`Payment verified for $${orderTotal.toFixed(2)}`);
+      } else {
+        reject(new Error(`$${orderTotal.toFixed(2)} requires manager approval`));
+      }
+    }, 800);
+  });
+}
+// Tests (Promises)
+verifyPaymentPromise(3000)
+  .then(msg => console.log(msg))
+  .catch(err => console.error(err.message));
+verifyPaymentPromise(6000)
+  .then(msg => console.log(msg))
+  .catch(err => console.error(err.message));
 
-verifyPayment(6000,
-  (msg) => console.log(msg),
-  (err) => console.error(err)
-);
+/* ========================================================================== */
+/* 4. Async/Await — uses the Promise version                                  */
+/* ========================================================================== */
+async function handlePayment(total) {
+  try {
+    const message = await verifyPaymentPromise(total);
+    console.log(message);
+  } catch (err) {
+    console.error(err.message);
+  }
+}
+handlePayment(3000);
+handlePayment(6000);
