@@ -122,3 +122,29 @@ document.addEventListener("DOMContentLoaded", () => {
     employeeTable.appendChild(newRow);
   });
 });
+
+
+/* ========================================================================== */
+/* Callbacks */
+/* ========================================================================== */
+
+function verifyPayment(orderTotal, onSuccess, onError) {
+  setTimeout(() => {
+    if (orderTotal < 5000) {
+      onSuccess(`Payment verified for $${orderTotal.toFixed(2)}`);
+    } else {
+      onError(`$${orderTotal.toFixed(2)} requires manager approval`);
+    }
+  }, 800);
+}
+
+// Tests
+verifyPayment(3000,
+  (msg) => console.log(msg),
+  (err) => console.error(err)
+);
+
+verifyPayment(6000,
+  (msg) => console.log(msg),
+  (err) => console.error(err)
+);
